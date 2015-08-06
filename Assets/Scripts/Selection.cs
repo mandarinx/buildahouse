@@ -1,14 +1,14 @@
 ﻿using UnityEngine;
-using Mandarin;
 
+[RequireComponent(typeof(NineSlice))]
 public class Selection : MonoBehaviour {
 
     public LayerMask    mask;
-    public Material     gridMat;
-    public NineSlice    nineSlice;
     public float        unitSize = 1f;
     public float        gridSize = 10f;
+    public bool         lockOnRelease = true;
 
+    private NineSlice   nineSlice;
     private Vector2     selectionPos;
     private Vector2     index;
 
@@ -17,16 +17,24 @@ public class Selection : MonoBehaviour {
     // 2: width
     // 3: height
     private float[]     selectionData;
-    private GameObject  grid;
+    //  private GameObject  grid;
     private float       selX;
     private float       selZ;
     private float       selW;
     private float       selH;
 
     void Awake() {
-        CreateGrid(gridSize, unitSize, ref grid);
+        //  grid = GameObject.CreatePrimitive(PrimitiveType.Plane);
+        //  grid.transform.position = new Vector3(0f, -0.001f, 0f);
+        //  grid.layer = LayerMask.NameToLayer("Selection");
+        //  Destroy(grid.GetComponent<MeshCollider>());
+        //  grid.AddComponent<BoxCollider>().center = new Vector3(0f, 0.001f, 0f);
+
         selectionData = new float[4]{0,0,0,0};
+
+        nineSlice = GetComponent<NineSlice>();
         nineSlice.SetSize(unitSize, unitSize);
+        nineSlice.transform.rotation = Quaternion.Euler(90f, 0f, 0f);
     }
 
     void Update() {
@@ -38,8 +46,6 @@ public class Selection : MonoBehaviour {
             index.y = Mathf.Round(hit.point.z / unitSize);
             selectionPos.x = index.x * unitSize;
             selectionPos.y = index.y * unitSize;
-
-            nineSlice.SetPosition(selectionPos.x, 0f, selectionPos.y);
         } else {
             return;
         }
@@ -49,7 +55,11 @@ public class Selection : MonoBehaviour {
             selectionData[1] = index.y;
             selectionData[2] = 1;
             selectionData[3] = 1;
-            nineSlice.SetPosition(selectionPos.x, 0f, selectionPos.y);
+
+            nineSlice.SetPosition(
+                selectionPos.x,
+                hit.point.y + 0.01f,
+                selectionPos.y);
             nineSlice.SetSize(unitSize, unitSize);
         }
 
@@ -59,25 +69,17 @@ public class Selection : MonoBehaviour {
 
             selX = (selectionData[0] + (selectionData[2] / 2f)) * unitSize;
             selZ = (selectionData[1] + (selectionData[3] / 2f)) * unitSize;
-            nineSlice.SetPosition(selX, 0f, selZ);
+            nineSlice.SetPosition(selX, hit.point.y + 0.01f, selZ);
 
             selW = selectionData[2] >= 0 ? selectionData[2] + 1 : selectionData[2] - 1;
             selH = selectionData[3] >= 0 ? selectionData[3] + 1 : selectionData[3] - 1;
             nineSlice.SetSize(
-                Mathf.Max(unitSize, Mathf.Abs(selW * unitSize)),
-                Mathf.Max(unitSize, Mathf.Abs(selH * unitSize)));
+                Mathf.Abs(selW * unitSize),
+                Mathf.Abs(selH * unitSize));
         }
-    }
 
-    private void CreateGrid(float gridDim, float unitSize, ref GameObject grid) {
-        grid = MeshUtils.CreatePlane(
-            gridDim, gridDim, (int)(gridDim / unitSize), (int)(gridDim / unitSize),
-            Vector3.zero, Orientation.Horizontal, 0f, 0f,
-            false, true, "Grid");
-        grid.layer = LayerMask.NameToLayer("Build");
-        grid.GetComponent<MeshRenderer>().sharedMaterial = gridMat;
-        grid.transform.position = new Vector3(0f, -0.001f, 0f);
-        grid.GetComponent<BoxCollider>().center = new Vector3(0f, 0.001f, 0f);
+        if (Input.GetMouseButtonUp(0)) {
+        }
     }
 
 }

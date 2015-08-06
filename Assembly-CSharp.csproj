@@ -50,6 +50,13 @@
      <Compile Include="Assets\Scripts\MeshUtils.cs" />
      <Compile Include="Assets\Scripts\NineSlice.cs" />
      <Compile Include="Assets\Scripts\Selection.cs" />
+     <Compile Include="Assets\Water Flow\Scripts\WaterFlow.cs" />
+     <Compile Include="Assets\Water Flow\Scripts\WaterFlowDemo.cs" />
+     <Compile Include="Assets\Water Flow\Scripts\WaterFlowOrbitCamera.cs" />
+     <None Include="Assets\Water Flow\!Readme.txt" />
+     <None Include="Assets\Water Flow\Shaders\Water Diffuse.shader" />
+     <None Include="Assets\Water Flow\Shaders\Water Heightmap.shader" />
+     <None Include="Assets\Water Flow\Shaders\Water Simple.shader" />
  <Reference Include="UnityEngine.UI">
  <HintPath>/Applications/Unity/Unity.app/Contents/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>
  </Reference>
