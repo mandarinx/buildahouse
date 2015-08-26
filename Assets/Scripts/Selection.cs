@@ -4,6 +4,9 @@ using Mandarin;
 [RequireComponent(typeof(NineSlice))]
 public class Selection : MonoBehaviour {
 
+    // TODO:
+    // Selection grid must match voxel grid. Take blockSize intro account.
+    
     public LayerMask    mask;
     public float        unitSize = 1f;
     public float        gridSize = 10f;
@@ -25,7 +28,7 @@ public class Selection : MonoBehaviour {
     private float       selH;
 
     void Awake() {
-        grid = MeshUtils.CreatePlane(10f, 10f, 10, 10, new Vector3(0f, -0.001f, 0f));
+        grid = MeshUtils.CreatePlane(50f, 50f, 1, 1, new Vector3(0f, -0.001f, 0f));
         grid.layer = LayerMask.NameToLayer("Selection");
         grid.AddComponent<BoxCollider>().center = new Vector3(0f, 0.001f, 0f);
         grid.name = "SelectionBase";
@@ -80,6 +83,7 @@ public class Selection : MonoBehaviour {
         }
 
         if (Input.GetMouseButtonUp(0)) {
+            Callbacks.SendSelectionData(selectionData);
         }
     }
 

@@ -5,21 +5,26 @@ public class GameManager : MonoBehaviour {
 
     public ChunkManager     chunkManager;
 
-    //  public Vector3          raycasthit;
-    //  public Vector3          blockCoord;
     void Awake() {
         chunkManager = new ChunkManager();
-        //  blockCoord = chunkManager.GetBlockCoord(raycasthit);
-        //  chunkManager.SetBlock(blockCoord, 1);
+        Callbacks.OnSelectionData += OnSelectionData;
     }
 
-    void Update() {
-        // raycaster => vector3
-        // display build block, snapped to voxel grid
-            // get global voxel coord
-            // multiply vector by blocksize
+    private void OnSelectionData(float[] data) {
+        int width = (int)Mathf.Abs(data[2]);
+        int length = (int)Mathf.Abs(data[3]);
 
-        // click:
-        // chunks.GetBlock(coord).SetType(int)
+        for (int x=0; x<width; x++) {
+            int xpos = (int)data[0];
+            int ypos = (int)data[1];
+            xpos += x * (int)Mathf.Sign(data[2]);
+
+            for (int y=0; y<length; y++) {
+                ypos += y * (int)Mathf.Sign(data[3]);
+                Vector3 blockCoord = chunkManager.GetBlockCoord(new Vector3(xpos, 0f, ypos));
+                chunkManager.SetBlock(blockCoord, 1);
+            }
+
+        }
     }
 }
