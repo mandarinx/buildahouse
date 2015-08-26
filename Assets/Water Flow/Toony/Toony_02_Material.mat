@@ -52,23 +52,23 @@ Material:
       data:
         first:
           name: _MainTexTile
-        second: 50
+        second: 2.0999999
       data:
         first:
           name: _HeightMapTile
-        second: 30
+        second: 49.9000015
       data:
         first:
           name: _MainTexRefraction
-        second: .550000012
+        second: .270000011
       data:
         first:
           name: _HeightMapStrength
-        second: .99000001
+        second: 2.44000006
       data:
         first:
           name: _HeightMapMultiply
-        second: .331
+        second: .0500000007
     m_Colors:
       data:
         first:

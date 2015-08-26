@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using Mandarin;
 
 [RequireComponent(typeof(NineSlice))]
 public class Selection : MonoBehaviour {
@@ -17,18 +18,18 @@ public class Selection : MonoBehaviour {
     // 2: width
     // 3: height
     private float[]     selectionData;
-    //  private GameObject  grid;
+    private GameObject  grid;
     private float       selX;
     private float       selZ;
     private float       selW;
     private float       selH;
 
     void Awake() {
-        //  grid = GameObject.CreatePrimitive(PrimitiveType.Plane);
-        //  grid.transform.position = new Vector3(0f, -0.001f, 0f);
-        //  grid.layer = LayerMask.NameToLayer("Selection");
-        //  Destroy(grid.GetComponent<MeshCollider>());
-        //  grid.AddComponent<BoxCollider>().center = new Vector3(0f, 0.001f, 0f);
+        grid = MeshUtils.CreatePlane(10f, 10f, 10, 10, new Vector3(0f, -0.001f, 0f));
+        grid.layer = LayerMask.NameToLayer("Selection");
+        grid.AddComponent<BoxCollider>().center = new Vector3(0f, 0.001f, 0f);
+        grid.name = "SelectionBase";
+        Destroy(grid.GetComponent<MeshRenderer>());
 
         selectionData = new float[4]{0,0,0,0};
 

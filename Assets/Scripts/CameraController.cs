@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-using System.Collections;
+using HyperGames;
 
 public class CameraController : MonoBehaviour {
 
@@ -19,11 +19,21 @@ public class CameraController : MonoBehaviour {
     private Quaternion  rotateRot;
     private Quaternion  rootRot;
     private Quaternion  rotationDelta;
+    private Camera      cam;
+    private float       zoomSpeed;
 
     void Awake() {
+        cam = GetComponent<Camera>();
         moveCamera = false;
         pxPrMm = 64f;
         anglesPrMm = 10f;
+        zoomSpeed = 15f;
+        Messenger.AddListener<ScrollEvent>(OnScroll);
+    }
+
+    private void OnScroll(ScrollEvent scrollData) {
+        cam.fieldOfView -= scrollData.direction.y * zoomSpeed * Time.deltaTime;
+        cam.fieldOfView = Mathf.Clamp(cam.fieldOfView, 20f, 120f);
     }
 
     void Update () {
