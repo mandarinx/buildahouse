@@ -22,6 +22,7 @@ public class GameManager : MonoBehaviour {
             for (int y=0; y<length; y++) {
                 ypos += y * (int)Mathf.Sign(data[3]);
                 Vector3 blockCoord = chunkManager.GetBlockCoord(new Vector3(xpos, 0f, ypos));
+                Debug.Log(blockCoord);
                 chunkManager.SetBlock(blockCoord, 1);
             }
 
