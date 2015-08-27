@@ -19,13 +19,12 @@ public class GameManagerInspector : Editor {
         Vector3 newBlockCoord = EditorGUILayout.Vector3Field("Block coord", blockCoord);
         if (newBlockCoord != blockCoord) {
             blockCoord = newBlockCoord;
-            chunkCoord = gm.chunkManager.GetChunkCoord(blockCoord);
+            //  chunkCoord = gm.chunkManager.GetChunkCoord(blockCoord);
         }
         EditorGUILayout.Vector3Field("Chunk coord", chunkCoord);
 
         if (GUILayout.Button("Add chunk")) {
-            //  Vector3 blockCoord = gm.chunkManager.GetBlockCoord(blockCoord);
-            gm.chunkManager.SetBlock(blockCoord, 1);
+            //  gm.chunkManager.AddChunk(blockCoord);
         }
     }
 
@@ -34,18 +33,31 @@ public class GameManagerInspector : Editor {
             return;
         }
 
+        Handles.color = new Color(1f, 1f, 1f, 0.05f);
+
         foreach (KeyValuePair<int, Chunk> pair in gm.chunkManager.chunks) {
             Vector3 dot = Vector3.zero;
 
-            for (int y=0; y<gm.chunkManager.chunkSize + 1; y++) {
+            for (int y=0; y<gm.chunkManager.chunkSize; y++) {
                 dot.y = CalcPos(y, gm.chunkManager.pivot.y, pair.Value.worldCoord.y);
 
-                for (int z=0; z<gm.chunkManager.chunkSize + 1; z++) {
+                for (int z=0; z<gm.chunkManager.chunkSize; z++) {
                     dot.z = CalcPos(z, gm.chunkManager.pivot.z, pair.Value.worldCoord.z);
 
-                    for (int x=0; x<gm.chunkManager.chunkSize + 1; x++) {
+                    for (int x=0; x<gm.chunkManager.chunkSize; x++) {
                         dot.x = CalcPos(x, gm.chunkManager.pivot.x, pair.Value.worldCoord.x);
-                        Handles.CubeCap(0, dot, Quaternion.identity, 0.1f);
+
+                        //  Debug.Log("Get block: "+dot);
+                        //  Voxel block = gm.chunkManager.GetBlock(dot);
+                        //  if (block != null) {
+                        //      int blockType = DataParser.GetBlockType(block.data);
+                        //      if (blockType == 1) {
+                        //          Debug.Log("Block "+dot+" is type 1");
+                        //          Handles.color = new Color(0f, 1f, 0f, 0.1f);
+                        //      }
+                        //  }
+                        Handles.CubeCap(0, dot, Quaternion.identity, 1f);
+                        Handles.color = new Color(1f, 1f, 1f, 0.05f);
                     }
                 }
             }

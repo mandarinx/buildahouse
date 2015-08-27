@@ -11,7 +11,8 @@ static public class DataParser {
     // Rotation y: 2 bits
     // Rotation z: 2 bits
 
-    static public void GetTheme(int data, ref Theme theme) {
+    static public Theme GetTheme(int data) {
+        Theme theme = Theme.DEFAULT;
         if (IsSet(17, data)) {
             theme += 16;
         }
@@ -27,13 +28,15 @@ static public class DataParser {
         if (IsSet(21, data)) {
             theme += 1;
         }
+        return theme;
     }
 
     static public void SetTheme(ref int data, Theme theme) {
         SetBits(ToBin((int)theme, 5), 17, ref data);
     }
 
-    static public void GetBlock(int data, ref int id) {
+    static public int GetBlockType(int data) {
+        int id = 0;
         if (IsSet(12, data)) {
             id += 16;
         }
@@ -49,13 +52,15 @@ static public class DataParser {
         if (IsSet(16, data)) {
             id += 1;
         }
+        return id;
     }
 
-    static public void SetBlock(ref int data, int id) {
+    static public void SetBlockType(ref int data, int id) {
         SetBits(ToBin(id, 5), 12, ref data);
     }
 
-    static public void GetVariant(int data, ref int id) {
+    static public int GetVariant(int data) {
+        int id = 0;
         if (IsSet(6, data)) {
             id += 32;
         }
@@ -74,21 +79,20 @@ static public class DataParser {
         if (IsSet(11, data)) {
             id += 1;
         }
+        return id;
     }
 
     static public void SetVariant(ref int data, int id) {
-        Debug.Log(ToBin(id, 6));
         SetBits(ToBin(id, 6), 6, ref data);
     }
 
-    static public void GetRotation(int data, ref Quaternion quaternion) {
-        quaternion = Quaternion.Euler(BitsToRotation(data, 5, 4),
-                                      BitsToRotation(data, 3, 2),
-                                      BitsToRotation(data, 1, 0));
+    static public Quaternion GetRotation(int data) {
+        return Quaternion.Euler(BitsToRotation(data, 5, 4),
+                                BitsToRotation(data, 3, 2),
+                                BitsToRotation(data, 1, 0));
     }
 
     static public void SetRotation(ref int data, Quaternion quaternion) {
-        // TODO: Possible to get by without an allocation?
         char[] bits = new char[6];
         SetRotationIndex(quaternion.eulerAngles.x, ref bits, 0);
         SetRotationIndex(quaternion.eulerAngles.y, ref bits, 2);
@@ -97,7 +101,6 @@ static public class DataParser {
         // from right to left, and we want to read the rotation
         // x, y, z from left to right.
         Array.Reverse(bits);
-        // TODO: Possible to get by without an allocation?
         SetBits(new string(bits), 0, ref data);
     }
 

@@ -35,7 +35,7 @@ public class DictionaryTester : MonoBehaviour {
                     int y = (int)Mathf.Floor(UnityEngine.Random.value * 7);
                     int z = (int)Mathf.Floor(UnityEngine.Random.value * 7);
                     int v = (int)Mathf.Floor(UnityEngine.Random.value * 2048);
-                    chunk.Set(x, y, z, v);
+                    //  chunk.Set(x, y, z, v);
                 }
             }
         }

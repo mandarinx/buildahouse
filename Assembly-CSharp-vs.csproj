@@ -51,6 +51,7 @@
      <Compile Include="Assets\Scripts\CameraController.cs" />
      <Compile Include="Assets\Scripts\Chunk.cs" />
      <Compile Include="Assets\Scripts\ChunkManager.cs" />
+     <Compile Include="Assets\Scripts\CoordDebugger.cs" />
      <Compile Include="Assets\Scripts\DataParser.cs" />
      <Compile Include="Assets\Scripts\DictionaryTester.cs" />
      <Compile Include="Assets\Scripts\Enums.cs" />
