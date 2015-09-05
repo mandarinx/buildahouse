@@ -78,7 +78,7 @@ namespace Mandarin {
             return GameObject.Instantiate(current) as GameObject;
         }
 
-        public GOBuilder AddBoxCollider(Vector3 size, Vector3 center) {
+        public GOBuilder AddBoxCollider(Vector3 size, Vector3 center = default(Vector3)) {
             BoxCollider collider = current.AddComponent<BoxCollider>();
             collider.size = size;
             collider.center = center;
