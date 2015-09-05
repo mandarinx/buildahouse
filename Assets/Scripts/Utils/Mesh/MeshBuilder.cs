@@ -23,7 +23,7 @@ namespace Mandarin {
             indices.Add(index2);
         }
 
-        public Mesh CreateMesh() {
+        public Mesh GetMesh() {
             Mesh mesh = new Mesh();
             mesh.vertices = vertices.ToArray();
             mesh.triangles = indices.ToArray();

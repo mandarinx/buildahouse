@@ -3,9 +3,9 @@
 namespace Mandarin {
     public partial class MeshBuilder {
 
-        public void CreateQuad(Vector3       offset,
-                               Vector3       widthDir,
-                               Vector3       lengthDir) {
+        public MeshBuilder CreateQuad(Vector3       offset,
+                                      Vector3       widthDir,
+                                      Vector3       lengthDir) {
 
             Vector3 normal = Vector3.Cross(lengthDir, widthDir).normalized;
 
@@ -29,6 +29,8 @@ namespace Mandarin {
 
             AddTriangle(baseIndex, baseIndex + 1, baseIndex + 2);
             AddTriangle(baseIndex, baseIndex + 2, baseIndex + 3);
+
+            return this;
         }
 
     }

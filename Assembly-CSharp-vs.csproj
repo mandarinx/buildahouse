@@ -67,6 +67,7 @@
      <Compile Include="Assets\Scripts\Selection.cs" />
      <Compile Include="Assets\Scripts\TileIndex.cs" />
      <Compile Include="Assets\Scripts\Utils\GameObject\GOBuilder.cs" />
+     <Compile Include="Assets\Scripts\Utils\Mesh\CreateCube.cs" />
      <Compile Include="Assets\Scripts\Utils\Mesh\CreateQuad.cs" />
      <Compile Include="Assets\Scripts\Utils\Mesh\MeshBuilder.cs" />
      <Compile Include="Assets\Scripts\Voxel.cs" />
