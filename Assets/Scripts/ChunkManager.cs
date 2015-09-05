@@ -16,20 +16,18 @@ public class ChunkManager {
     }
 
     // Casts world coordinate to global block coordinate
-    public Point3 GetBlockCoord(Vector3 worldCoord) {
+    public Point3 GetWorldBlockCoord(Vector3 worldCoord) {
         return new Point3(Mathf.Floor(worldCoord.x / blockSize),
                           Mathf.Floor(worldCoord.y / blockSize),
                           Mathf.Floor(worldCoord.z / blockSize));
-
-        //  return new Vector3(Mathf.Floor(worldCoord.x) + chunkDim * pivot.x,
-        //                     Mathf.Floor(worldCoord.y) + chunkDim * pivot.y,
-        //                     Mathf.Floor(worldCoord.z) + chunkDim * pivot.z);
     }
 
-    public Point3 GetLocalBlockCoord(Point3 blockCoord) {
-        float x = (blockCoord.x + chunkDim * pivot.x) % chunkDim;
-        float y = (blockCoord.y + chunkDim * pivot.y) % chunkDim;
-        float z = (blockCoord.z + chunkDim * pivot.z) % chunkDim;
+    // Converts world space block coord to local space relative
+    // to the chunk that owns the block
+    public Point3 GetLocalBlockCoord(Point3 worldBlocCoord) {
+        float x = (worldBlocCoord.x + chunkDim * pivot.x) % chunkDim;
+        float y = (worldBlocCoord.y + chunkDim * pivot.y) % chunkDim;
+        float z = (worldBlocCoord.z + chunkDim * pivot.z) % chunkDim;
 
         return new Point3(
             x < 0 ? x - ((int)Mathf.Floor(x / (float)chunkDim) * chunkDim) : x,
@@ -38,38 +36,32 @@ public class ChunkManager {
         );
     }
 
-    public Point3 GetChunkCoord(Point3 blockCoord) {
-        return new Point3(Mathf.Floor((blockCoord.x + chunkDim * pivot.x) / chunkDim),
-                          Mathf.Floor((blockCoord.y + chunkDim * pivot.y) / chunkDim),
-                          Mathf.Floor((blockCoord.z + chunkDim * pivot.z) / chunkDim));
-        //  return new Vector3(Mathf.Floor(blockCoord.x / chunkDim),
-        //                     Mathf.Floor(blockCoord.y / chunkDim),
-        //                     Mathf.Floor(blockCoord.z / chunkDim));
+    // Returns chunk coord based on local space block coord
+    public Point3 GetChunkCoord(Point3 localBlockCoord) {
+        return new Point3(Mathf.Floor((localBlockCoord.x + chunkDim * pivot.x) / chunkDim),
+                          Mathf.Floor((localBlockCoord.y + chunkDim * pivot.y) / chunkDim),
+                          Mathf.Floor((localBlockCoord.z + chunkDim * pivot.z) / chunkDim));
     }
 
-    // Use a getChunk to get the chunk, then addChunk if get returns null
-    // get block via block coordinate
+    public Voxel GetBlock(Vector3 worldCoord) {
+        return GetBlock(GetWorldBlockCoord(worldCoord));
+    }
 
-    //  public Chunk GetChunk(Vector3 )
-    public Voxel GetBlock(Point3 blockCoord) {
-        Point3 chunkCoord = GetChunkCoord(blockCoord);
+    public Voxel GetBlock(Point3 worldBlockCoord) {
+        Point3 chunkCoord = GetChunkCoord(worldBlockCoord);
         int hash = GetHash(chunkCoord);
-        Debug.Log("blockCoord: "+blockCoord+" = chunkCoord: "+chunkCoord+" hash: "+hash);
         Chunk chunk;
         chunks.TryGetValue(hash, out chunk);
         if (chunk == null) {
             return null;
         }
 
-        Voxel voxel = chunk.Get((int)(blockCoord.x - chunk.worldCoord.x),
-                                (int)(blockCoord.y - chunk.worldCoord.y),
-                                (int)(blockCoord.z - chunk.worldCoord.z));
-
-        return voxel;
+        return chunk.Get(GetLocalBlockCoord(worldBlockCoord));
     }
 
-    public Chunk AddChunk(Point3 blockCoord) {
-        Point3 chunkCoord = GetChunkCoord(blockCoord);
+    // Add overrides for Vector3 and chunk coord?
+    public Chunk AddChunk(Point3 worldBlockCoord) {
+        Point3 chunkCoord = GetChunkCoord(worldBlockCoord);
         int hash = GetHash(chunkCoord);
         Chunk chunk;
         chunks.TryGetValue(hash, out chunk);

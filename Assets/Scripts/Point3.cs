@@ -18,6 +18,16 @@ public class Point3 {
         return new Vector3(x, y, z);
     }
 
+    public void CopyTo(ref Vector3 v3) {
+        v3.x = x;
+        v3.y = y;
+        v3.z = z;
+    }
+
+    static public Point3 zero {
+        get { return new Point3(); }
+    }
+
     override public string ToString() {
         return "Point3 { x: "+x+" y: "+y+" z: "+z+" }";
     }

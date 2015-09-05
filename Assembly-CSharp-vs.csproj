@@ -66,7 +66,11 @@
      <Compile Include="Assets\Scripts\Point3.cs" />
      <Compile Include="Assets\Scripts\Selection.cs" />
      <Compile Include="Assets\Scripts\TileIndex.cs" />
+     <Compile Include="Assets\Scripts\Utils\GameObject\GOBuilder.cs" />
+     <Compile Include="Assets\Scripts\Utils\Mesh\CreateQuad.cs" />
+     <Compile Include="Assets\Scripts\Utils\Mesh\MeshBuilder.cs" />
      <Compile Include="Assets\Scripts\Voxel.cs" />
+     <Compile Include="Assets\Scripts\VoxelSelector.cs" />
      <Compile Include="Assets\Water Flow\Scripts\WaterFlow.cs" />
      <Compile Include="Assets\Water Flow\Scripts\WaterFlowDemo.cs" />
      <Compile Include="Assets\Water Flow\Scripts\WaterFlowOrbitCamera.cs" />
