@@ -7,3 +7,8 @@ public class ScrollEvent : Message {
         this.direction = direction;
     }
 }
+
+public class PlacedBlock : Message {
+    public Point3       worldCoord;
+    public BlockType    type;
+}

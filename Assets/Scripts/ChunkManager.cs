@@ -37,10 +37,14 @@ public class ChunkManager {
     }
 
     // Returns chunk coord based on local space block coord
-    public Point3 GetChunkCoord(Point3 localBlockCoord) {
-        return new Point3(Mathf.Floor((localBlockCoord.x + chunkDim * pivot.x) / chunkDim),
-                          Mathf.Floor((localBlockCoord.y + chunkDim * pivot.y) / chunkDim),
-                          Mathf.Floor((localBlockCoord.z + chunkDim * pivot.z) / chunkDim));
+    public Point3 GetChunkCoord(Point3 worldBlockCoord) {
+        return new Point3(Mathf.Floor((worldBlockCoord.x + chunkDim * pivot.x) / chunkDim),
+                          Mathf.Floor((worldBlockCoord.y + chunkDim * pivot.y) / chunkDim),
+                          Mathf.Floor((worldBlockCoord.z + chunkDim * pivot.z) / chunkDim));
+    }
+
+    public Voxel GetBlock(int worldX, int worldY, int worldZ) {
+        return GetBlock(new Point3(worldX, worldY, worldZ));
     }
 
     public Voxel GetBlock(Vector3 worldCoord) {
