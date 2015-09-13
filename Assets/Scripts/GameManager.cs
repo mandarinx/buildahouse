@@ -14,7 +14,7 @@ public class GameManager : MonoBehaviour {
         int width = (int)Mathf.Abs(data[2]) + 1;
         int length = (int)Mathf.Abs(data[3]) + 1;
 
-        Debug.Log("Selection width: "+width+" length: "+length);
+        //  Debug.Log("Selection width: "+width+" length: "+length);
 
         for (int x=0; x<width; x++) {
             int xpos = 0;

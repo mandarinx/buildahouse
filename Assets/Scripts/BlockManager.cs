@@ -31,20 +31,50 @@ public class BlockManager : MonoBehaviour {
     }
 
     private void OnPlacedBlock(PlacedBlock msg) {
-        Voxel block = chunkManager.GetBlock(msg.worldCoord);
-        Point3 localCoord = chunkManager.GetLocalBlockCoord(msg.worldCoord);
-        Point3 chunkCoord = chunkManager.GetChunkCoord(msg.worldCoord);
-        int hash = chunkManager.GetHash(chunkCoord);
-        GameObject container = null;
-
+        Point3 worldCoord = msg.worldCoord;
+        Voxel block = chunkManager.GetBlock(worldCoord);
         if (block == null) {
-            block = chunkManager.AddChunk(msg.worldCoord).Add(localCoord);
+            Point3 localCoord = chunkManager.GetLocalBlockCoord(worldCoord);
+            block = chunkManager.AddChunk(worldCoord).Add(localCoord);
         }
 
+        Point3 chunkCoord = chunkManager.GetChunkCoord(worldCoord);
+        int hash = chunkManager.GetHash(chunkCoord);
         DataParser.SetBlockType(ref block.data, (int)msg.type);
 
-        surfaceManager.FindSurface(ref block, msg.worldCoord);
+        // Get neighbours, pass to surface manager
+        Voxel[] neighbours = GetNeighbours(worldCoord);
 
+        // Lookup mesh name and rotation based on neighbours
+        BlockInfo bi = surfaceManager.GetSurface(neighbours);
+        DataParser.SetRotation(ref block.data, bi.rotation);
+
+        for (int i=0; i<neighbours.Length; i++) {
+            if (neighbours[i] == null) {
+                continue;
+            }
+
+            if (i == 0) {
+                UpdateNeighbour(ref neighbours[i].data, worldCoord.x + 1, worldCoord.y, worldCoord.z);
+            }
+            if (i == 1) {
+                UpdateNeighbour(ref neighbours[i].data, worldCoord.x - 1, worldCoord.y, worldCoord.z);
+            }
+            if (i == 2) {
+                UpdateNeighbour(ref neighbours[i].data, worldCoord.x, worldCoord.y + 1, worldCoord.z);
+            }
+            if (i == 3) {
+                UpdateNeighbour(ref neighbours[i].data, worldCoord.x, worldCoord.y - 1, worldCoord.z);
+            }
+            if (i == 4) {
+                UpdateNeighbour(ref neighbours[i].data, worldCoord.x, worldCoord.y, worldCoord.z + 1);
+            }
+            if (i == 5) {
+                UpdateNeighbour(ref neighbours[i].data, worldCoord.x, worldCoord.y, worldCoord.z - 1);
+            }
+        }
+
+        GameObject container = null;
         // Put code below in an event handler for OnFoundSurface??
         if (!chunks.ContainsKey(hash)) {
             container = GOBuilder.Create()
@@ -62,12 +92,39 @@ public class BlockManager : MonoBehaviour {
         PlaceBlock(bcv3, container.transform);
     }
 
+    private void UpdateNeighbour(ref int data, int x, int y, int z) {
+        Voxel[] neighbours = GetNeighbours(new Point3(x, y, z));
+        BlockInfo bi = surfaceManager.GetSurface(neighbours);
+        DataParser.SetRotation(ref data, bi.rotation);
+
+        // TODO: Update GameObject
+    }
+
+    private Voxel[] GetNeighbours(Point3 coord) {
+        Voxel[] neighbours = new Voxel[6];
+        int i = 0;
+
+        // Sequence: z+ > x+ > z- > x- > y+ > y-
+        neighbours[i++] = GetNeighbour(coord,  0,  0,  1);
+        neighbours[i++] = GetNeighbour(coord,  1,  0,  0);
+        neighbours[i++] = GetNeighbour(coord,  0,  0, -1);
+        neighbours[i++] = GetNeighbour(coord, -1,  0,  0);
+        neighbours[i++] = GetNeighbour(coord,  0,  1,  0);
+        neighbours[i++] = GetNeighbour(coord,  0, -1,  0);
+
+        return neighbours;
+    }
+
+    private Voxel GetNeighbour(Point3 worldCoord, int x, int y, int z) {
+        return chunkManager.GetBlock(worldCoord.x + x, worldCoord.y + y, worldCoord.z + z);
+    }
+
     private void PlaceBlock(Vector3 worldCoord, Transform parent) {
         GOBuilder.Create()
             .SetParent(parent)
             .SetMesh(voxelMesh)
             .SetName(Name(worldCoord))
-            .SetMaterial(voxelMat, false, ShadowCastingMode.Off)
+            .SetMaterial(voxelMat, true, ShadowCastingMode.On)
             .AddBoxCollider(Vector3.one * chunkManager.blockSize)
             .SetPosition(worldCoord);
     }
