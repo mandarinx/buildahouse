@@ -1,13 +1,21 @@
 ﻿using UnityEngine;
-using System.Collections;
+using Mandarin;
 
 public class GameManager : MonoBehaviour {
 
     public ChunkManager     chunkManager;
+    public BlockManager     blockManager;
 
     void Awake() {
         chunkManager = new ChunkManager();
         Callbacks.OnSelectionData += OnSelectionData;
+
+        GOBuilder.Create()
+            .SetName("BlockManager")
+            .AddComponent<BlockManager>((bm) => {
+                blockManager = bm;
+                bm.Init(chunkManager);
+            });
     }
 
     private void OnSelectionData(float[] data) {

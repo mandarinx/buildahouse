@@ -47,6 +47,7 @@
   <ItemGroup>
      <Compile Include="Assets\Funnel\Funnel.cs" />
      <Compile Include="Assets\Scripts\BitTester.cs" />
+     <Compile Include="Assets\Scripts\BlockDebugger.cs" />
      <Compile Include="Assets\Scripts\BlockManager.cs" />
      <Compile Include="Assets\Scripts\BlockType.cs" />
      <Compile Include="Assets\Scripts\Callbacks.cs" />
@@ -68,6 +69,7 @@
      <Compile Include="Assets\Scripts\Point3.cs" />
      <Compile Include="Assets\Scripts\Selection.cs" />
      <Compile Include="Assets\Scripts\SurfaceManager.cs" />
+     <Compile Include="Assets\Scripts\ThemeTester.cs" />
      <Compile Include="Assets\Scripts\TileIndex.cs" />
      <Compile Include="Assets\Scripts\Utils\GameObject\GOBuilder.cs" />
      <Compile Include="Assets\Scripts\Utils\Mesh\CreateCube.cs" />

@@ -16,9 +16,9 @@ public class SurfaceManager {
         chunkManager = cm;
     }
 
-    public BlockInfo GetSurface(Voxel[] neighbours) {
+    public BlockInfo GetSurface(int id) {
         //  Voxel[] neighbours = GetNeighbours(worldCoord);
-        int id = GetID(neighbours);
+        //  int id = GetID(neighbours);
         return GetBlockInfo(id);
         //  DataParser.SetRotation(ref block.data, bi.rotation);
 
@@ -93,25 +93,27 @@ public class SurfaceManager {
     //      return neighbours;
     //  }
 
-    private int GetID(Voxel[] neighbours) {
-        int id = 0;
-        for (int i=0; i<neighbours.Length; i++) {
+    // Requires neighbours to be listed in correct order.
+    // That's bloody stupid!
+    //  private int GetID(Voxel[] neighbours) {
+    //      int id = 0;
+    //      for (int i=0; i<neighbours.Length; i++) {
 
-            if (neighbours[i] == null) {
-                continue;
-            }
+    //          if (neighbours[i] == null) {
+    //              continue;
+    //          }
 
-            switch (i) {
-                case 0: id += 1; break;
-                case 1: id += 2; break;
-                case 2: id += 4; break;
-                case 3: id += 8; break;
-                case 4: id += 16; break;
-                case 5: id += 32; break;
-            }
-        }
-        return id;
-    }
+    //          switch (i) {
+    //              case 0: id += 1; break;
+    //              case 1: id += 2; break;
+    //              case 2: id += 4; break;
+    //              case 3: id += 8; break;
+    //              case 4: id += 16; break;
+    //              case 5: id += 32; break;
+    //          }
+    //      }
+    //      return id;
+    //  }
 
     //  private Voxel GetNeighbour(Point3 worldCoord, int x, int y, int z) {
     //      return chunkManager.GetBlock(worldCoord.x + x, worldCoord.y + y, worldCoord.z + z);

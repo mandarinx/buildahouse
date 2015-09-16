@@ -12,3 +12,7 @@ public class PlacedBlock : Message {
     public Point3       worldCoord;
     public BlockType    type;
 }
+
+public class RemoveBlock : Message {
+    public Point3       worldCoord;
+}

@@ -43,6 +43,14 @@ public class ChunkManager {
                           Mathf.Floor((worldBlockCoord.z + chunkDim * pivot.z) / chunkDim));
     }
 
+    public Chunk GetChunk(Point3 worldBlockCoord) {
+        Point3 chunkCoord = GetChunkCoord(worldBlockCoord);
+        int hash = GetHash(chunkCoord);
+        Chunk chunk;
+        chunks.TryGetValue(hash, out chunk);
+        return chunk;
+    }
+
     public Voxel GetBlock(int worldX, int worldY, int worldZ) {
         return GetBlock(new Point3(worldX, worldY, worldZ));
     }
@@ -52,10 +60,7 @@ public class ChunkManager {
     }
 
     public Voxel GetBlock(Point3 worldBlockCoord) {
-        Point3 chunkCoord = GetChunkCoord(worldBlockCoord);
-        int hash = GetHash(chunkCoord);
-        Chunk chunk;
-        chunks.TryGetValue(hash, out chunk);
+        Chunk chunk = GetChunk(worldBlockCoord);
         if (chunk == null) {
             return null;
         }

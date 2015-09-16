@@ -66,6 +66,15 @@ namespace Mandarin {
             return this;
         }
 
+        public GOBuilder SetRotation(Quaternion quaternion, bool local = false) {
+            if (local) {
+                current.transform.localRotation = quaternion;
+            } else {
+                current.transform.rotation = quaternion;
+            }
+            return this;
+        }
+
         public GOBuilder AddComponent<T>(ComponentAdded<T> callback = null) where T : Component {
             T component = current.AddComponent<T>();
             if (callback != null) {

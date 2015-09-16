@@ -14,16 +14,28 @@ public class Chunk {
         return voxels[x, y, z];
     }
 
+    public void Set(int x, int y, int z, Voxel voxel) {
+        voxels[x, y, z] = voxel;
+    }
+
+    public void Set(Point3 coord, Voxel voxel) {
+        Set(coord.x, coord.y, coord.z, voxel);
+    }
+
     public Voxel Get(Point3 localBlockCoord) {
         return voxels[localBlockCoord.x,
                       localBlockCoord.y,
                       localBlockCoord.z];
     }
 
-    public Voxel Add(Point3 localBlockCoord) {
+    public Voxel AddBlock(Point3 localBlockCoord) {
         voxels[localBlockCoord.x,
                localBlockCoord.y,
                localBlockCoord.z] = new Voxel();
         return Get(localBlockCoord);
+    }
+
+    public void RemoveBlock(Point3 localCoord) {
+        Set(localCoord, null);
     }
 }
