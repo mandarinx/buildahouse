@@ -38,7 +38,7 @@ public class BlockDebugger {
         if (block == null) {
             return;
         }
-        
+
         Point3 localCoord = cm.GetLocalBlockCoord(worldCoord);
         Voxel[] neighbours = blockManager.GetNeighbours(worldCoord);
         int blockID = blockManager.GetID(neighbours);
