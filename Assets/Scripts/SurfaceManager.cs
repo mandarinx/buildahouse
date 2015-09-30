@@ -1,125 +1,32 @@
 ﻿using UnityEngine;
-using System;
 
 public struct BlockInfo {
     public string       meshName;
     public Quaternion   rotation;
 }
 
-// TODO: Find a better name for the class
-
 public class SurfaceManager {
 
-    private ChunkManager    chunkManager;
-
-    public SurfaceManager(ChunkManager cm) {
-        chunkManager = cm;
-    }
-
-    public BlockInfo GetSurface(int id) {
-        //  Voxel[] neighbours = GetNeighbours(worldCoord);
-        //  int id = GetID(neighbours);
-        return GetBlockInfo(id);
-        //  DataParser.SetRotation(ref block.data, bi.rotation);
-
-        //  for (int i=0; i<neighbours.Length; i++) {
-        //      if (neighbours[i] == null) {
-        //          continue;
-        //      }
-
-        //      if (i == 0) {
-        //          UpdateNeighbour(ref neighbours[i].data, worldCoord.x + 1, worldCoord.y, worldCoord.z);
-        //      }
-        //      if (i == 1) {
-        //          UpdateNeighbour(ref neighbours[i].data, worldCoord.x - 1, worldCoord.y, worldCoord.z);
-        //      }
-        //      if (i == 2) {
-        //          UpdateNeighbour(ref neighbours[i].data, worldCoord.x, worldCoord.y + 1, worldCoord.z);
-        //      }
-        //      if (i == 3) {
-        //          UpdateNeighbour(ref neighbours[i].data, worldCoord.x, worldCoord.y - 1, worldCoord.z);
-        //      }
-        //      if (i == 4) {
-        //          UpdateNeighbour(ref neighbours[i].data, worldCoord.x, worldCoord.y, worldCoord.z + 1);
-        //      }
-        //      if (i == 5) {
-        //          UpdateNeighbour(ref neighbours[i].data, worldCoord.x, worldCoord.y, worldCoord.z - 1);
-        //      }
-        //  }
-
-        //  return bi.meshName;
-    }
-
-    //  private void UpdateNeighbour(ref int data, int x, int y, int z) {
-    //      int id = GetID(GetNeighbours(new Point3(x + 1, y, z)));
-    //      DataParser.SetBlockType(ref data, id);
-    //      DataParser.SetRotation(ref data, GetBlockInfo(id).rotation);
-    //  }
-
-    //  private Voxel[] GetNeighbours(Point3 coord) {
-    //      Voxel[] neighbours = new Voxel[6];
-    //      int i = 0;
-
-    //      Voxel n1 = GetNeighbour(coord,  1,  0,  0);
-    //      if (n1 != null) {
-    //          neighbours[i++] = n1;
-    //      }
-
-    //      Voxel n2 = GetNeighbour(coord, -1,  0,  0);
-    //      if (n2 != null) {
-    //          neighbours[i++] = n2;
-    //      }
-
-    //      Voxel n3 = GetNeighbour(coord,  0,  1,  0);
-    //      if (n3 != null) {
-    //          neighbours[i++] = n3;
-    //      }
-
-    //      Voxel n4 = GetNeighbour(coord,  0, -1,  0);
-    //      if (n4 != null) {
-    //          neighbours[i++] = n4;
-    //      }
-
-    //      Voxel n5 = GetNeighbour(coord,  0,  0,  1);
-    //      if (n5 != null) {
-    //          neighbours[i++] = n5;
-    //      }
-
-    //      Voxel n6 = GetNeighbour(coord,  0,  0, -1);
-    //      if (n6 != null) {
-    //          neighbours[i++] = n6;
-    //      }
-
-    //      return neighbours;
-    //  }
+    static private int[] neighbourIDs = new int[] { 1, 2, 4, 8, 16, 32 };
 
     // Requires neighbours to be listed in correct order.
-    // That's bloody stupid!
-    //  private int GetID(Voxel[] neighbours) {
-    //      int id = 0;
-    //      for (int i=0; i<neighbours.Length; i++) {
+    // Returns the sum of each neighbour's ID.
+    static public int GetID(Voxel[] neighbours) {
+        int id = 0;
+        for (int i=0; i<neighbours.Length; i++) {
+            if (neighbours[i] == null) {
+                continue;
+            }
+            id += neighbourIDs[i];
+        }
+        return id;
+    }
 
-    //          if (neighbours[i] == null) {
-    //              continue;
-    //          }
+    static public BlockInfo GetSurface(int id) {
+        return GetBlockInfo(id);
+    }
 
-    //          switch (i) {
-    //              case 0: id += 1; break;
-    //              case 1: id += 2; break;
-    //              case 2: id += 4; break;
-    //              case 3: id += 8; break;
-    //              case 4: id += 16; break;
-    //              case 5: id += 32; break;
-    //          }
-    //      }
-    //      return id;
-    //  }
-
-    //  private Voxel GetNeighbour(Point3 worldCoord, int x, int y, int z) {
-    //      return chunkManager.GetBlock(worldCoord.x + x, worldCoord.y + y, worldCoord.z + z);
-    //  }
-
-    private BlockInfo GetBlockInfo(int id) {
+    static private BlockInfo GetBlockInfo(int id) {
         BlockInfo bi = new BlockInfo();
         bi.rotation = Quaternion.identity;
 

@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System;
 
-static public class DataParser {
+static public class VoxelExtensions {
 
     // Free:      10 bits
     // Theme:      5 bits
@@ -11,88 +11,96 @@ static public class DataParser {
     // Rotation y: 2 bits
     // Rotation z: 2 bits
 
-    static public Theme GetTheme(int data) {
+    static public Theme GetTheme(this Voxel v) {
         Theme theme = Theme.DEFAULT;
-        if (IsSet(17, data)) {
+        if (IsSet(17, v.data)) {
             theme += 16;
         }
-        if (IsSet(18, data)) {
+        if (IsSet(18, v.data)) {
             theme += 8;
         }
-        if (IsSet(19, data)) {
+        if (IsSet(19, v.data)) {
             theme += 4;
         }
-        if (IsSet(20, data)) {
+        if (IsSet(20, v.data)) {
             theme += 2;
         }
-        if (IsSet(21, data)) {
+        if (IsSet(21, v.data)) {
             theme += 1;
         }
         return theme;
     }
 
-    static public void SetTheme(ref int data, Theme theme) {
-        SetBits(ToBin((int)theme, 5), 17, ref data);
+    static public Voxel SetTheme(this Voxel v, Theme theme) {
+        SetBits(ToBin((int)theme, 5), 17, ref v.data);
+        return v;
     }
 
-    static public int GetBlockType(int data) {
+    static public BlockType GetBlockType(this Voxel v) {
+        BlockType bt = BlockType.UNDEFINED;
+        if (IsSet(12, v.data)) {
+            bt += 16;
+        }
+        if (IsSet(13, v.data)) {
+            bt += 8;
+        }
+        if (IsSet(14, v.data)) {
+            bt += 4;
+        }
+        if (IsSet(15, v.data)) {
+            bt += 2;
+        }
+        if (IsSet(16, v.data)) {
+            bt += 1;
+        }
+        return bt;
+    }
+
+    static public Voxel SetBlockType(this Voxel v, int id) {
+        SetBits(ToBin(id, 5), 12, ref v.data);
+        return v;
+    }
+
+    static public Voxel SetBlockType(this Voxel v, BlockType bt) {
+        SetBits(ToBin((int)bt, 5), 12, ref v.data);
+        return v;
+    }
+
+    static public int GetVariant(this Voxel v) {
         int id = 0;
-        if (IsSet(12, data)) {
-            id += 16;
-        }
-        if (IsSet(13, data)) {
-            id += 8;
-        }
-        if (IsSet(14, data)) {
-            id += 4;
-        }
-        if (IsSet(15, data)) {
-            id += 2;
-        }
-        if (IsSet(16, data)) {
-            id += 1;
-        }
-        return id;
-    }
-
-    static public void SetBlockType(ref int data, int id) {
-        SetBits(ToBin(id, 5), 12, ref data);
-    }
-
-    static public int GetVariant(int data) {
-        int id = 0;
-        if (IsSet(6, data)) {
+        if (IsSet(6, v.data)) {
             id += 32;
         }
-        if (IsSet(7, data)) {
+        if (IsSet(7, v.data)) {
             id += 16;
         }
-        if (IsSet(8, data)) {
+        if (IsSet(8, v.data)) {
             id += 8;
         }
-        if (IsSet(9, data)) {
+        if (IsSet(9, v.data)) {
             id += 4;
         }
-        if (IsSet(10, data)) {
+        if (IsSet(10, v.data)) {
             id += 2;
         }
-        if (IsSet(11, data)) {
+        if (IsSet(11, v.data)) {
             id += 1;
         }
         return id;
     }
 
-    static public void SetVariant(ref int data, int id) {
-        SetBits(ToBin(id, 6), 6, ref data);
+    static public Voxel SetVariant(this Voxel v, int id) {
+        SetBits(ToBin(id, 6), 6, ref v.data);
+        return v;
     }
 
-    static public Quaternion GetRotation(int data) {
-        return Quaternion.Euler(BitsToRotation(data, 5, 4),
-                                BitsToRotation(data, 3, 2),
-                                BitsToRotation(data, 1, 0));
+    static public Quaternion GetRotation(this Voxel v) {
+        return Quaternion.Euler(BitsToRotation(v.data, 5, 4),
+                                BitsToRotation(v.data, 3, 2),
+                                BitsToRotation(v.data, 1, 0));
     }
 
-    static public void SetRotation(ref int data, Quaternion quaternion) {
+    static public Voxel SetRotation(this Voxel v, Quaternion quaternion) {
         char[] bits = new char[6];
         SetRotationIndex(quaternion.eulerAngles.x, ref bits, 0);
         SetRotationIndex(quaternion.eulerAngles.y, ref bits, 2);
@@ -101,7 +109,8 @@ static public class DataParser {
         // from right to left, and we want to read the rotation
         // x, y, z from left to right.
         Array.Reverse(bits);
-        SetBits(new string(bits), 0, ref data);
+        SetBits(new string(bits), 0, ref v.data);
+        return v;
     }
 
     static private void SetRotationIndex(float angle, ref char[] bits, int pos) {
@@ -167,13 +176,13 @@ static public class DataParser {
         data |= (1 << bitIndex);
     }
 
-    static public string GetBinaryString(int n) {
+    static public string GetBinaryString(this Voxel v) {
         char[] b = new char[32];
         int pos = 31;
         int i = 0;
 
         while (i < 32) {
-            if ((n & (1 << i)) != 0) {
+            if ((v.data & (1 << i)) != 0) {
                 b[pos] = '1';
             } else {
                 b[pos] = '0';

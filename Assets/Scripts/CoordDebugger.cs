@@ -28,68 +28,63 @@ public class CoordDebugger : MonoBehaviour {
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         Point3 bc = Point3.zero;
         Point3 lbc = Point3.zero;
+        Vector3 pos = Vector3.zero;
 
         if (Physics.Raycast(ray, out hit)) {
             blockDebugger.GetInfo(hit.transform.gameObject);
             Debug.DrawLine(ray.origin, hit.point, Color.magenta);
             Debug.DrawLine(hit.point, hit.point + (hit.normal * 0.5f), Color.cyan);
 
-            Vector3 coord = hit.point;
+            bc = Point3.ToWorldBlockCoord(hit.point);
+            worldBlockCoord = bc.ToVector3();
+            lbc = bc.ToLocalBlockCoord();
+            localBlockCoord = lbc.ToVector3();
+            Point3 cc = bc.ToChunkCoord();
+            chunkCoord = cc.ToVector3();
 
-            bc = gm.chunkManager.GetWorldBlockCoord(coord);
-            bc.CopyTo(ref worldBlockCoord);
-
-            lbc = gm.chunkManager.GetLocalBlockCoord(bc);
-            lbc.CopyTo(ref localBlockCoord);
-
-            Point3 cc = gm.chunkManager.GetChunkCoord(bc);
-            cc.CopyTo(ref chunkCoord);
-
-            Vector3 p = Vector3.zero;
             if (Input.GetKey(KeyCode.LeftControl)) {
                 selector.UseCube();
-                p = hit.point - hit.normal * 0.5f;
+                pos = hit.point - hit.normal * 0.5f;
             } else {
                 selector.UsePlane();
                 selector.transform.up = hit.normal;
-                p = hit.point;
+                pos = hit.point;
             }
 
             if (hit.normal == Vector3.right ||
                 hit.normal == -Vector3.right) {
-                p.y = worldBlockCoord.y + 0.5f;
-                p.z = worldBlockCoord.z + 0.5f;
+                pos.y = worldBlockCoord.y + 0.5f;
+                pos.z = worldBlockCoord.z + 0.5f;
             }
 
             if (hit.normal == Vector3.forward ||
                 hit.normal == -Vector3.forward) {
-                p.x = worldBlockCoord.x + 0.5f;
-                p.y = worldBlockCoord.y + 0.5f;
+                pos.x = worldBlockCoord.x + 0.5f;
+                pos.y = worldBlockCoord.y + 0.5f;
             }
 
             if (hit.normal == Vector3.up ||
                 hit.normal == -Vector3.up) {
-                p.x = worldBlockCoord.x + 0.5f;
-                p.z = worldBlockCoord.z + 0.5f;
+                pos.x = worldBlockCoord.x + 0.5f;
+                pos.z = worldBlockCoord.z + 0.5f;
             }
 
-            selectedBlock = gm.chunkManager.GetWorldBlockCoord(p + hit.normal * 0.5f);
-
-            selector.transform.position = p;
+            selectedBlock = Point3.ToWorldBlockCoord(pos + hit.normal * 0.5f);
+            selector.transform.position = pos;
         }
 
         if (Input.GetMouseButtonUp(0)) {
             if (Input.GetKey(KeyCode.LeftControl)) {
-                RemoveBlock rmBlock = new RemoveBlock();
-                rmBlock.worldCoord = gm.chunkManager.GetWorldBlockCoord(selector.transform.position);
-                Messenger.Dispatch(rmBlock);
+                Messenger.Dispatch(new RemoveBlock() {
+                    worldCoord = Point3.ToWorldBlockCoord(pos)
+                });
                 return;
             }
 
-            PlacedBlock placedBlock = new PlacedBlock();
-            placedBlock.type = BlockType.DIRT;
-            placedBlock.worldCoord = selectedBlock;
-            Messenger.Dispatch(placedBlock);
+            Messenger.Dispatch(new PlacedBlock() {
+                type = BlockType.DIRT,
+                worldCoord = selectedBlock
+            });
         }
     }
 
@@ -104,8 +99,9 @@ public class CoordDebugger : MonoBehaviour {
             .SetName("VoxelSelector")
             .SetParent(transform)
             .AddComponent<VoxelSelector>((vs) => {
-                vs.Create(gm.chunkManager.blockSize);
+                vs.Create(ChunkManager.blockSize);
             })
-            .GameObject.GetComponent<VoxelSelector>();
+            .gameObject
+            .GetComponent<VoxelSelector>();
     }
 }

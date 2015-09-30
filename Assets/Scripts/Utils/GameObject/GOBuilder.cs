@@ -13,8 +13,16 @@ namespace Mandarin {
             return new GOBuilder();
         }
 
+        static public GOBuilder Modify(GameObject go) {
+            return new GOBuilder(go);
+        }
+
         public GOBuilder() {
             current = new GameObject();
+        }
+
+        public GOBuilder(GameObject go) {
+            current = go;
         }
 
         public GOBuilder SetName(string name) {
@@ -95,8 +103,12 @@ namespace Mandarin {
             return this;
         }
 
-        public GameObject GameObject {
+        public GameObject gameObject {
             get { return current; }
+        }
+
+        public Transform transform {
+            get { return current.transform; }
         }
     }
 }

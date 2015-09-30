@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.Rendering;
+using System;
 using System.Collections.Generic;
 using Mandarin;
 using HyperGames;
@@ -7,22 +8,22 @@ using HyperGames;
 public class BlockManager : MonoBehaviour {
 
     private const string                    objNameFormat = "{0}_{1}_{2}";
-    // Set to public due to BlockDebugger
-    public ChunkManager                     chunkManager;
     private Material                        voxelMat;
     private Mesh                            voxelMesh;
     private Dictionary<int, GameObject>     chunks;
-    public SurfaceManager                   surfaceManager;
+    static private Point3[]                 checkSides = new Point3[] {
+                                                Point3.forward,         Point3.right,
+                                                Point3.forward * -1,    Point3.right * -1,
+                                                Point3.up,              Point3.up * -1
+                                            };
 
-    public void Init(ChunkManager cm) {
-        chunkManager = cm;
+    public void Init() {
         chunks = new Dictionary<int, GameObject>();
-        surfaceManager = new SurfaceManager(cm);
 
         voxelMesh = new MeshBuilder()
-            .CreateCube(chunkManager.blockSize,
-                        chunkManager.blockSize,
-                        chunkManager.blockSize,
+            .CreateCube(ChunkManager.blockSize,
+                        ChunkManager.blockSize,
+                        ChunkManager.blockSize,
                         new Vector3(0.5f, 0.5f, 0.5f))
             .GetMesh();
 
@@ -34,18 +35,17 @@ public class BlockManager : MonoBehaviour {
 
     private void OnRemoveBlock(RemoveBlock msg) {
         Point3 worldCoord = msg.worldCoord;
-        Chunk chunk = chunkManager.GetChunk(worldCoord);
-        if (chunk == null) {
-            return;
+        Chunk chunk = ChunkManager.GetChunk(worldCoord);
+        if (chunk != null) {
+            chunk.RemoveBlock(worldCoord.ToLocalBlockCoord());
         }
-        Point3 localCoord = chunkManager.GetLocalBlockCoord(worldCoord);
-        chunk.RemoveBlock(localCoord);
 
-        Point3 chunkCoord = chunkManager.GetChunkCoord(worldCoord);
-        int hash = chunkManager.GetHash(chunkCoord);
+        int hash = ChunkManager.GetHash(worldCoord.ToChunkCoord());
         string name = Name(worldCoord);
 
         // TODO: Fix the deleting of gameobjects. I'd rather use a pool.
+        // Casts an error when hash doesn't exist, like when clicking
+        // on the ground
         GameObject container = chunks[hash];
         foreach (Transform child in container.transform) {
             if (child.name == name) {
@@ -53,89 +53,59 @@ public class BlockManager : MonoBehaviour {
             }
         }
 
-        Voxel[] neighbours = GetNeighbours(worldCoord);
-        for (int i=0; i<neighbours.Length; i++) {
-            if (neighbours[i] == null) {
-                continue;
-            }
-
-            if (i == 0) {
-                UpdateNeighbour(ref neighbours[i].data, worldCoord.x, worldCoord.y, worldCoord.z + 1);
-            }
-            if (i == 1) {
-                UpdateNeighbour(ref neighbours[i].data, worldCoord.x + 1, worldCoord.y, worldCoord.z);
-            }
-            if (i == 2) {
-                UpdateNeighbour(ref neighbours[i].data, worldCoord.x, worldCoord.y, worldCoord.z - 1);
-            }
-            if (i == 3) {
-                UpdateNeighbour(ref neighbours[i].data, worldCoord.x - 1, worldCoord.y, worldCoord.z);
-            }
-            if (i == 4) {
-                UpdateNeighbour(ref neighbours[i].data, worldCoord.x, worldCoord.y + 1, worldCoord.z);
-            }
-            if (i == 5) {
-                UpdateNeighbour(ref neighbours[i].data, worldCoord.x, worldCoord.y - 1, worldCoord.z);
-            }
-        }
+        UpdateNeighbours(GetNeighbours(worldCoord), worldCoord);
     }
 
     private void OnPlacedBlock(PlacedBlock msg) {
         Point3 worldCoord = msg.worldCoord;
-        Voxel block = chunkManager.GetBlock(worldCoord);
+        Voxel block = ChunkManager.GetBlock(worldCoord);
         if (block == null) {
-            Point3 localCoord = chunkManager.GetLocalBlockCoord(worldCoord);
-            block = chunkManager.AddChunk(worldCoord).AddBlock(localCoord);
+            block = ChunkManager
+                .AddChunk(worldCoord)
+                .AddBlock(worldCoord.ToLocalBlockCoord());
         }
 
-        Point3 chunkCoord = chunkManager.GetChunkCoord(worldCoord);
-        int hash = chunkManager.GetHash(chunkCoord);
-        DataParser.SetBlockType(ref block.data, (int)msg.type);
+        int hash = ChunkManager.GetHash(worldCoord.ToChunkCoord());
+        block.SetBlockType(msg.type);
 
         // Get neighbours, pass to surface manager
         Voxel[] neighbours = GetNeighbours(worldCoord);
 
         // Lookup mesh name and rotation based on neighbours
-        BlockInfo bi = surfaceManager.GetSurface(GetID(neighbours));
-        DataParser.SetRotation(ref block.data, bi.rotation);
+        BlockInfo bi =
+            SurfaceManager.GetSurface(
+                SurfaceManager.GetID(neighbours));
+
+        block.SetRotation(bi.rotation);
 
         for (int i=0; i<neighbours.Length; i++) {
             if (neighbours[i] == null) {
                 continue;
             }
-
-            if (i == 0) {
-                UpdateNeighbour(ref neighbours[i].data, worldCoord.x, worldCoord.y, worldCoord.z + 1);
-            }
-            if (i == 1) {
-                UpdateNeighbour(ref neighbours[i].data, worldCoord.x + 1, worldCoord.y, worldCoord.z);
-            }
-            if (i == 2) {
-                UpdateNeighbour(ref neighbours[i].data, worldCoord.x, worldCoord.y, worldCoord.z - 1);
-            }
-            if (i == 3) {
-                UpdateNeighbour(ref neighbours[i].data, worldCoord.x - 1, worldCoord.y, worldCoord.z);
-            }
-            if (i == 4) {
-                UpdateNeighbour(ref neighbours[i].data, worldCoord.x, worldCoord.y + 1, worldCoord.z);
-            }
-            if (i == 5) {
-                UpdateNeighbour(ref neighbours[i].data, worldCoord.x, worldCoord.y - 1, worldCoord.z);
-            }
+            UpdateNeighbour(neighbours[i], worldCoord + checkSides[i]);
         }
 
         PlaceBlock(msg.worldCoord, hash, bi);
     }
 
-    private void UpdateNeighbour(ref int data, int x, int y, int z) {
-        Point3 worldCoord = new Point3(x, y, z);
-        Voxel[] neighbours = GetNeighbours(worldCoord);
-        BlockInfo bi = surfaceManager.GetSurface(GetID(neighbours));
-        DataParser.SetRotation(ref data, bi.rotation);
+    private void UpdateNeighbours(Voxel[] neighbours, Point3 center) {
+        for (int i=0; i<neighbours.Length; i++) {
+            if (neighbours[i] == null) {
+                continue;
+            }
+            UpdateNeighbour(neighbours[i], center + checkSides[i]);
+        }
+    }
 
-        string name = Name(x, y, z);
-        Point3 chunkCoord = chunkManager.GetChunkCoord(new Point3(x, y, z));
-        int hash = chunkManager.GetHash(chunkCoord);
+    private void UpdateNeighbour(Voxel v, Point3 worldCoord) {
+        BlockInfo bi =
+            SurfaceManager.GetSurface(
+                SurfaceManager.GetID(
+                    GetNeighbours(worldCoord)));
+
+        v.SetRotation(bi.rotation);
+
+        int hash = ChunkManager.GetHash(worldCoord.ToChunkCoord());
 
         Transform chunkContainer = null;
         foreach (Transform child in transform) {
@@ -151,6 +121,7 @@ public class BlockManager : MonoBehaviour {
         }
 
         Mesh mesh = Resources.Load("Meshes/Dev/"+bi.meshName) as Mesh;
+        string name = Name(worldCoord);
 
         foreach (Transform block in chunkContainer) {
             if (block.name == name) {
@@ -160,45 +131,12 @@ public class BlockManager : MonoBehaviour {
         }
     }
 
-    public Voxel[] GetNeighbours(Point3 worldCoord) {
+    static public Voxel[] GetNeighbours(Point3 worldCoord) {
         Voxel[] neighbours = new Voxel[6];
-        int i = 0;
-
-        // Sequence: z+ > x+ > z- > x- > y+ > y-
-        neighbours[i++] = GetNeighbour(worldCoord,  0,  0,  1);
-        neighbours[i++] = GetNeighbour(worldCoord,  1,  0,  0);
-        neighbours[i++] = GetNeighbour(worldCoord,  0,  0, -1);
-        neighbours[i++] = GetNeighbour(worldCoord, -1,  0,  0);
-        neighbours[i++] = GetNeighbour(worldCoord,  0,  1,  0);
-        neighbours[i++] = GetNeighbour(worldCoord,  0, -1,  0);
-
-        return neighbours;
-    }
-
-    private Voxel GetNeighbour(Point3 worldCoord, int x, int y, int z) {
-        return chunkManager.GetBlock(worldCoord.x + x, worldCoord.y + y, worldCoord.z + z);
-    }
-
-    // Requires neighbours to be listed in correct order.
-    // That's bloody stupid!
-    public int GetID(Voxel[] neighbours) {
-        int id = 0;
-        for (int i=0; i<neighbours.Length; i++) {
-
-            if (neighbours[i] == null) {
-                continue;
-            }
-
-            switch (i) {
-                case 0: id += 1; break;
-                case 1: id += 2; break;
-                case 2: id += 4; break;
-                case 3: id += 8; break;
-                case 4: id += 16; break;
-                case 5: id += 32; break;
-            }
+        for (int i=0; i<checkSides.Length; i++) {
+            neighbours[i] = ChunkManager.GetBlock(worldCoord + checkSides[i]);
         }
-        return id;
+        return neighbours;
     }
 
     private void PlaceBlock(Point3 worldCoord, int hash, BlockInfo info) {
@@ -213,7 +151,7 @@ public class BlockManager : MonoBehaviour {
             container = GOBuilder.Create()
                 .SetName(hash.ToString())
                 .SetParent(transform)
-                .GameObject;
+                .gameObject;
             chunks.Add(hash, container);
         }
         chunks.TryGetValue(hash, out container);
@@ -228,7 +166,7 @@ public class BlockManager : MonoBehaviour {
             .SetMesh(mesh)
             .SetName(Name(worldCoord))
             .SetMaterial(voxelMat, true, ShadowCastingMode.On)
-            .AddBoxCollider(Vector3.one * chunkManager.blockSize)
+            .AddBoxCollider(Vector3.one * ChunkManager.blockSize)
             .SetPosition(wCoord)
             .SetRotation(info.rotation, true);
     }

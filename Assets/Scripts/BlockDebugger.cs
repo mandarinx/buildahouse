@@ -25,36 +25,32 @@ public class BlockDebugger {
             return;
         }
 
-        ChunkManager cm = blockManager.chunkManager;
-
         if (sb == null) {
             sb = new StringBuilder();
         }
 
         sb.Remove(0, sb.Length);
 
-        Point3 worldCoord = cm.GetWorldBlockCoord(obj.transform.position);
-        Voxel block = cm.GetBlock(worldCoord);
+        Point3 worldCoord = Point3.ToWorldBlockCoord(obj.transform.position);
+        Voxel block = ChunkManager.GetBlock(worldCoord);
         if (block == null) {
             return;
         }
 
-        Point3 localCoord = cm.GetLocalBlockCoord(worldCoord);
-        Voxel[] neighbours = blockManager.GetNeighbours(worldCoord);
-        int blockID = blockManager.GetID(neighbours);
-        Point3 chunkCoord = cm.GetChunkCoord(worldCoord);
-        int chunkID = cm.GetHash(chunkCoord);
-        BlockInfo bi = blockManager.surfaceManager.GetSurface(blockID);
-        BlockType type = (BlockType)DataParser.GetBlockType(block.data);
+        Voxel[] neighbours = BlockManager.GetNeighbours(worldCoord);
+        int blockID = SurfaceManager.GetID(neighbours);
+        Point3 chunkCoord = worldCoord.ToChunkCoord();
+        int chunkID = ChunkManager.GetHash(chunkCoord);
+        BlockInfo bi = SurfaceManager.GetSurface(blockID);
 
         sb.AppendLine("ID: "+blockID);
-        sb.AppendLine("Type: "+type);
+        sb.AppendLine("Type: "+block.GetBlockType());
         sb.AppendLine("Chunk ID: "+chunkID);
         sb.AppendLine("Mesh: "+bi.meshName);
         sb.AppendLine("Rotation: "+bi.rotation.eulerAngles.y+
                       "/"+obj.transform.rotation.eulerAngles.y+
-                      "/"+DataParser.GetRotation(block.data).eulerAngles.y);
-        sb.AppendLine("Local coord: "+localCoord);
+                      "/"+block.GetRotation().eulerAngles.y);
+        sb.AppendLine("Local coord: "+worldCoord.ToLocalBlockCoord());
         sb.AppendLine("World coord: "+worldCoord);
         sb.AppendLine("Chunk coord: "+chunkCoord);
     }

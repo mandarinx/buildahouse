@@ -22,51 +22,35 @@ public class BitTester : MonoBehaviour {
         string data = theme + block + variant + rotX + rotY + rotZ;
         v.data = Convert.ToInt32(data, 2);
         Debug.Log("Raw data: "+v.data);
-        Debug.Log("Binary data: "+DataParser.GetBinaryString(v.data));
-
-        Theme themeB = DataParser.GetTheme(v.data);
-        Debug.Log("Theme: "+themeB);
+        Debug.Log("Binary data: "+ v.GetBinaryString());
 
         // Change theme from space to western
+        Debug.Log("Theme: "+v.GetTheme());
         Debug.Log("Set theme: Theme.DEFAULT");
-        DataParser.SetTheme(ref v.data, Theme.DEFAULT);
-        Debug.Log("Binary data: "+DataParser.GetBinaryString(v.data));
-
-        Theme themeA = DataParser.GetTheme(v.data);
-        Debug.Log("Theme: "+themeA);
+        v.SetTheme(Theme.DEFAULT);
+        Debug.Log("Binary data: "+v.GetBinaryString());
+        Debug.Log("Theme: "+v.GetTheme());
 
 
-        int blockID = DataParser.GetBlockType(v.data);
-        Debug.Log("BlockID: "+blockID);
-
+        Debug.Log("BlockID: "+v.GetBlockType());
         Debug.Log("Set block ID: 0");
-        DataParser.SetBlockType(ref v.data, 0);
-        Debug.Log("Binary data: "+DataParser.GetBinaryString(v.data));
-
-        int blockIDNew = DataParser.GetBlockType(v.data);
-        Debug.Log("BlockID NEW: "+blockIDNew);
+        v.SetBlockType(0);
+        Debug.Log("Binary data: "+v.GetBinaryString());
+        Debug.Log("BlockID NEW: "+v.GetBlockType());
 
 
-        int variantB = DataParser.GetVariant(v.data);
-        Debug.Log("Variant before: "+variantB);
-
+        Debug.Log("Variant before: "+v.GetVariant());
         Debug.Log("Set variant: 2");
-        DataParser.SetVariant(ref v.data, 2);
-        Debug.Log("Binary data: "+DataParser.GetBinaryString(v.data));
-
-        int variantA = DataParser.GetVariant(v.data);
-        Debug.Log("Variant after: "+variantA);
+        v.SetVariant(2);
+        Debug.Log("Binary data: "+v.GetBinaryString());
+        Debug.Log("Variant after: "+v.GetVariant());
 
 
-        Quaternion quatB = DataParser.GetRotation(v.data);
-        Debug.Log("Rotation before: "+quatB.eulerAngles);
-
+        Debug.Log("Rotation before: "+v.GetRotation().eulerAngles);
         Debug.Log("Set rotation: 270, 0, 0");
-        DataParser.SetRotation(ref v.data, Quaternion.Euler(270f, 0f, 0f));
-        Debug.Log("Binary data: "+DataParser.GetBinaryString(v.data));
-
-        Quaternion quatA = DataParser.GetRotation(v.data);
-        Debug.Log("Rotation after: "+quatA.eulerAngles);
+        v.SetRotation(Quaternion.Euler(270f, 0f, 0f));
+        Debug.Log("Binary data: "+v.GetBinaryString());
+        Debug.Log("Rotation after: "+v.GetRotation().eulerAngles);
     }
 
 }
