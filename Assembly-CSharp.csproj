@@ -10,10 +10,12 @@
 	<OutputType>Library</OutputType>
 	<AppDesignerFolder>Properties</AppDesignerFolder>
 	<AssemblyName>Assembly-CSharp</AssemblyName>
-	<TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+	<TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
 	<FileAlignment>512</FileAlignment>
 	<BaseDirectory>Assets</BaseDirectory>
-  </PropertyGroup>
+	<TargetPath>Temp\bin\Debug\</TargetPath>
+	<LangVersion>default</LangVersion>
+</PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
 	<DebugSymbols>true</DebugSymbols>
 	<DebugType>full</DebugType>
@@ -23,7 +25,9 @@
 	<ErrorReport>prompt</ErrorReport>
 	<WarningLevel>4</WarningLevel>
 	<NoWarn>0169</NoWarn>
-  </PropertyGroup>
+	<TargetPath>Temp\bin\Debug\</TargetPath>
+	<LangVersion>default</LangVersion>
+</PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
 	<DebugType>pdbonly</DebugType>
 	<Optimize>true</Optimize>
@@ -31,7 +35,9 @@
 	<ErrorReport>prompt</ErrorReport>
 	<WarningLevel>4</WarningLevel>
 	<NoWarn>0169</NoWarn>
-  </PropertyGroup>
+	<TargetPath>Temp\bin\Debug\</TargetPath>
+	<LangVersion>default</LangVersion>
+</PropertyGroup>
   <ItemGroup>
 	<Reference Include="System" />
     <Reference Include="System.XML" />
@@ -57,7 +63,13 @@
      <Compile Include="Assets\Scripts\CoordDebugger.cs" />
      <Compile Include="Assets\Scripts\Enums.cs" />
      <Compile Include="Assets\Scripts\EventRelayer.cs" />
-     <Compile Include="Assets\Scripts\FPSController.cs" />
+     <Compile Include="Assets\Scripts\FPSController\CameraHeadBob.cs" />
+     <Compile Include="Assets\Scripts\FPSController\FirstPersonController.cs" />
+     <Compile Include="Assets\Scripts\FPSController\FirstPersonControllerEditor.cs" />
+     <Compile Include="Assets\Scripts\FPSController\FirstPersonInput.cs" />
+     <Compile Include="Assets\Scripts\FPSController\FootStepSoundsManager.cs" />
+     <Compile Include="Assets\Scripts\FPSController\Ladder.cs" />
+     <Compile Include="Assets\Scripts\FPSController\TagsManager.cs" />
      <Compile Include="Assets\Scripts\GameManager.cs" />
      <Compile Include="Assets\Scripts\Highlighter.cs" />
      <Compile Include="Assets\Scripts\IslandBuilder.cs" />
@@ -90,7 +102,6 @@
  <Reference Include="UnityEngine.Networking">
  <HintPath>/Applications/Unity/Unity.app/Contents/UnityExtensions/Unity/Networking/UnityEngine.Networking.dll</HintPath>
  </Reference>
- </Reference>
  <Reference Include="UnityEditor.iOS.Extensions.Xcode">
  <HintPath>/Applications/Unity/Unity.app/Contents/PlaybackEngines/iOSSupport/UnityEditor.iOS.Extensions.Xcode.dll</HintPath>
  </Reference>
@@ -103,5 +114,4 @@
   <Target Name="AfterBuild">
   </Target>
   -->
-  
 </Project>

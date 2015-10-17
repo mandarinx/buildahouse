@@ -3,3 +3,6 @@ Library
 obj
 Temp
 BuildAHouse.userprefs
+.vscode
+Assets/Plugins/Editor/VSCode.cs
+Assets/Plugins/Editor/VSCode.cs.meta

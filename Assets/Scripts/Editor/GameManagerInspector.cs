@@ -14,8 +14,6 @@ public class GameManagerInspector : Editor {
 
     override public void OnInspectorGUI() {
         DrawDefaultInspector();
-
-        }
     }
 
     void OnSceneGUI() {

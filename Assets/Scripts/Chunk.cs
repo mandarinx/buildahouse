@@ -19,6 +19,7 @@ public class Chunk {
             voxels.GetLength(y) < y ||
             voxels.GetLength(z) < z) {
             return;
+        }
         voxels[x, y, z] = voxel;
     }
 
