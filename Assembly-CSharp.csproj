@@ -85,6 +85,7 @@
      <Compile Include="Assets\Scripts\Utils\Mesh\CreateCube.cs" />
      <Compile Include="Assets\Scripts\Utils\Mesh\CreateQuad.cs" />
      <Compile Include="Assets\Scripts\Utils\Mesh\MeshBuilder.cs" />
+     <Compile Include="Assets\Scripts\Vector3Extensions.cs" />
      <Compile Include="Assets\Scripts\Voxel.cs" />
      <Compile Include="Assets\Scripts\VoxelExtensions.cs" />
      <Compile Include="Assets\Scripts\VoxelSelector.cs" />

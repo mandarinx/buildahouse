@@ -15,9 +15,9 @@ public class Chunk {
     }
 
     public void Set(int x, int y, int z, Voxel voxel) {
-        if (voxels.GetLength(x) < x ||
-            voxels.GetLength(y) < y ||
-            voxels.GetLength(z) < z) {
+        if (voxels.GetLength(0) < x ||
+            voxels.GetLength(1) < y ||
+            voxels.GetLength(2) < z) {
             return;
         }
         voxels[x, y, z] = voxel;

@@ -51,6 +51,8 @@ public class CoordDebugger : MonoBehaviour {
                 pos = hit.point;
             }
 
+            // TODO: Look into using cross product to get rid of branching
+
             if (hit.normal == Vector3.right ||
                 hit.normal == -Vector3.right) {
                 pos.y = worldBlockCoord.y + 0.5f;
@@ -70,7 +72,7 @@ public class CoordDebugger : MonoBehaviour {
             }
 
             selectedBlock = Point3.ToWorldBlockCoord(pos + hit.normal * 0.5f);
-            selector.transform.position = pos;
+            selector.transform.position = pos + hit.normal * 0.0001f;
         }
 
         if (Input.GetMouseButtonUp(0)) {
