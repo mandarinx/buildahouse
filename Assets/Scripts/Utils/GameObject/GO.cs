@@ -107,7 +107,7 @@ namespace Mandarin {
             return GameObject.Instantiate(current) as GameObject;
         }
 
-        private T GetSetComp<T>() {
+        private T GetSetComp<T>() where T : Component {
             T comp = current.GetComponent<T>();
             if (comp == null) {
                 comp = current.AddComponent<T>();
