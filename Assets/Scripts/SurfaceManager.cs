@@ -256,7 +256,7 @@ public class SurfaceManager {
                 break;
 
             case 15:
-                bi.meshName = "17";
+                bi.meshName = "15";
                 break;
 
             case 59:
