@@ -3,54 +3,54 @@ using UnityEngine.Rendering;
 
 namespace Mandarin {
 
-    public class GOBuilder {
+    public class GO {
 
         public delegate void ComponentAdded<T>(T component) where T : Component;
 
         private GameObject current;
 
-        static public GOBuilder Create() {
-            return new GOBuilder();
+        static public GO Create() {
+            return new GO();
         }
 
-        static public GOBuilder Modify(GameObject go) {
-            return new GOBuilder(go);
+        static public GO Modify(GameObject go) {
+            return new GO(go);
         }
 
-        public GOBuilder() {
+        public GO() {
             current = new GameObject();
         }
 
-        public GOBuilder(GameObject go) {
+        public GO(GameObject go) {
             current = go;
         }
 
-        public GOBuilder SetName(string name) {
+        public GO SetName(string name) {
             current.name = name;
             return this;
         }
 
-        public GOBuilder SetLayer(string name) {
+        public GO SetLayer(string name) {
             current.layer = LayerMask.NameToLayer(name);
             return this;
         }
 
-        public GOBuilder SetParent(Transform parent) {
+        public GO SetParent(Transform parent) {
             current.transform.parent = parent;
             return this;
         }
 
-        public GOBuilder SetActive(bool active) {
+        public GO SetActive(bool active) {
             current.SetActive(active);
             return this;
         }
 
-        public GOBuilder SetMesh(Mesh mesh) {
+        public GO SetMesh(Mesh mesh) {
             current.AddComponent<MeshFilter>().sharedMesh = mesh;
             return this;
         }
 
-        public GOBuilder SetMaterial(Material mat,
+        public GO SetMaterial(Material mat,
                                        bool receiveShadows = true,
                                        ShadowCastingMode castShadow = ShadowCastingMode.On) {
             MeshRenderer mr = current.AddComponent<MeshRenderer>();
@@ -60,12 +60,12 @@ namespace Mandarin {
             return this;
         }
 
-        public GOBuilder SetScale(Vector3 scale) {
+        public GO SetScale(Vector3 scale) {
             current.transform.localScale = scale;
             return this;
         }
 
-        public GOBuilder SetPosition(Vector3 position, bool local = false) {
+        public GO SetPosition(Vector3 position, bool local = false) {
             if (local) {
                 current.transform.localPosition = position;
             } else {
@@ -74,7 +74,7 @@ namespace Mandarin {
             return this;
         }
 
-        public GOBuilder SetRotation(Quaternion quaternion, bool local = false) {
+        public GO SetRotation(Quaternion quaternion, bool local = false) {
             if (local) {
                 current.transform.localRotation = quaternion;
             } else {
@@ -83,7 +83,7 @@ namespace Mandarin {
             return this;
         }
 
-        public GOBuilder AddComponent<T>(ComponentAdded<T> callback = null) where T : Component {
+        public GO AddComponent<T>(ComponentAdded<T> callback = null) where T : Component {
             T component = current.AddComponent<T>();
             if (callback != null) {
                 callback(component);
@@ -95,7 +95,7 @@ namespace Mandarin {
             return GameObject.Instantiate(current) as GameObject;
         }
 
-        public GOBuilder AddBoxCollider(Vector3 size, Vector3 center = default(Vector3)) {
+        public GO AddBoxCollider(Vector3 size, Vector3 center = default(Vector3)) {
             BoxCollider collider = current.AddComponent<BoxCollider>();
             collider.size = size;
             collider.center = center;

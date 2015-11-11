@@ -97,7 +97,7 @@ public class CoordDebugger : MonoBehaviour {
     }
 
     private void AddVoxelSelector() {
-        selector = GOBuilder.Create()
+        selector = GO.Create()
             .SetName("VoxelSelector")
             .SetParent(transform)
             .AddComponent<VoxelSelector>((vs) => {

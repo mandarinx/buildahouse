@@ -9,7 +9,7 @@ public class GameManager : MonoBehaviour {
     void Awake() {
         //  Callbacks.OnSelectionData += OnSelectionData;
 
-        GOBuilder.Create()
+        GO.Create()
             .SetName("BlockManager")
             .AddComponent<BlockManager>((bm) => {
                 blockManager = bm;

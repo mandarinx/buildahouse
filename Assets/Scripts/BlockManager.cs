@@ -148,7 +148,7 @@ public class BlockManager : MonoBehaviour {
         GameObject container = null;
         // Put code below in an event handler for OnFoundSurface??
         if (!chunks.ContainsKey(hash)) {
-            container = GOBuilder.Create()
+            container = GO.Create()
                 .SetName(hash.ToString())
                 .SetParent(transform)
                 .gameObject;
@@ -161,7 +161,7 @@ public class BlockManager : MonoBehaviour {
             mesh = voxelMesh;
         }
 
-        GOBuilder.Create()
+        GO.Create()
             .SetParent(container.transform)
             .SetMesh(mesh)
             .SetName(Name(worldCoord))
