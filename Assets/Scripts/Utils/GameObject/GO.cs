@@ -50,13 +50,18 @@ namespace Mandarin {
             return this;
         }
 
-        public GO SetMaterial(Material mat,
-                                       bool receiveShadows = true,
-                                       ShadowCastingMode castShadow = ShadowCastingMode.On) {
-            MeshRenderer mr = current.AddComponent<MeshRenderer>();
-            mr.sharedMaterial = mat;
-            mr.receiveShadows = receiveShadows;
-            mr.shadowCastingMode = castShadow;
+        public GO SetMaterial(Material mat) {
+            GetSetComp<MeshRenderer>().sharedMaterial = mat;
+            return this;
+        }
+
+        public GO ReceiveShadows(bool receiveShadows) {
+            GetSetComp<MeshRenderer>().receiveShadows = receiveShadows;
+            return this;
+        }
+
+        public GO CastShadows(ShadowCastingMode castShadows) {
+            GetSetComp<MeshRenderer>().shadowCastingMode = castShadows;
             return this;
         }
 
@@ -83,6 +88,13 @@ namespace Mandarin {
             return this;
         }
 
+        public GO AddBoxCollider(Vector3 size, Vector3 center = default(Vector3)) {
+            BoxCollider collider = GetSetComp<BoxCollider>();
+            collider.size = size;
+            collider.center = center;
+            return this;
+        }
+
         public GO AddComponent<T>(ComponentAdded<T> callback = null) where T : Component {
             T component = current.AddComponent<T>();
             if (callback != null) {
@@ -95,12 +107,12 @@ namespace Mandarin {
             return GameObject.Instantiate(current) as GameObject;
         }
 
-        public GO AddBoxCollider(Vector3 size, Vector3 center = default(Vector3)) {
-            BoxCollider collider = current.AddComponent<BoxCollider>();
-            collider.size = size;
-            collider.center = center;
-            collider = null;
-            return this;
+        private T GetSetComp<T>() {
+            T comp = current.GetComponent<T>();
+            if (comp == null) {
+                comp = current.AddComponent<T>();
+            }
+            return comp;
         }
 
         public GameObject gameObject {

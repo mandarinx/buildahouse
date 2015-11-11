@@ -141,9 +141,7 @@ public class BlockManager : MonoBehaviour {
 
     private void PlaceBlock(Point3 worldCoord, int hash, BlockInfo info) {
         Vector3 wCoord = worldCoord.ToVector3();
-        wCoord.x += 0.5f;
-        wCoord.y += 0.5f;
-        wCoord.z += 0.5f;
+        wCoord += Vector3.one * 0.5f;
 
         GameObject container = null;
         // Put code below in an event handler for OnFoundSurface??
@@ -165,7 +163,9 @@ public class BlockManager : MonoBehaviour {
             .SetParent(container.transform)
             .SetMesh(mesh)
             .SetName(Name(worldCoord))
-            .SetMaterial(voxelMat, true, ShadowCastingMode.On)
+            .SetMaterial(voxelMat)
+            .ReceiveShadows(true)
+            .CastShadows(ShadowCastingMode.On)
             .AddBoxCollider(Vector3.one * ChunkManager.blockSize)
             .SetPosition(wCoord)
             .SetRotation(info.rotation, true);
